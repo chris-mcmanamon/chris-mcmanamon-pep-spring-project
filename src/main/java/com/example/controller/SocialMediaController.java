@@ -1,9 +1,11 @@
 package com.example.controller;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
 import com.example.exception.AccountValidationException;
 import com.example.exception.DuplicateUsernameException;
 import com.example.exception.InvalidCredentialsException;
+import com.example.exception.MessageValidationException;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,18 @@ public class SocialMediaController {
   }
 
   /**
+   * Endpoint for posting a new message
+   *
+   * @param message a message in JSON format in the RequestBody
+   * @return the persisted message with status code 200 OK
+   */
+  @PostMapping("/messages")
+  public ResponseEntity<Message> postMessage(@RequestBody Message message) {
+    Message persistedMessage = messageService.postMessage(message);
+    return ResponseEntity.status(HttpStatus.OK).body(persistedMessage);
+  }
+
+  /**
    * Handles exceptions when attempting to register an existing username
    *
    * @param e the exception
@@ -87,5 +101,16 @@ public class SocialMediaController {
   @ExceptionHandler(InvalidCredentialsException.class)
   public ResponseEntity<String> handleInvalidCredentials(InvalidCredentialsException e) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+  }
+
+  /**
+   * Handles exceptions when message is invalid
+   *
+   * @param e the exception
+   * @return 400 Bad Request and the exception message
+   */
+  @ExceptionHandler(MessageValidationException.class)
+  public ResponseEntity<String> handleInvalidMessage(MessageValidationException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
   }
 }
