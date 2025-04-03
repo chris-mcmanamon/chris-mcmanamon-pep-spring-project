@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,6 +95,13 @@ public class SocialMediaController {
   public ResponseEntity<Message> getMessageById(@PathVariable int messageId) {
     Message message = messageService.getMessageById(messageId);
     return ResponseEntity.status(HttpStatus.OK).body(message);
+  }
+
+  @DeleteMapping("/messages/{messageId}")
+  public ResponseEntity<String> deleteMessage(@PathVariable int messageId) {
+    int rowsAffected = messageService.deleteMessageById(messageId);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(rowsAffected > 0 ? String.valueOf(rowsAffected) : null);
   }
 
   /**

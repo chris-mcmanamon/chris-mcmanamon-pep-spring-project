@@ -69,4 +69,18 @@ public class MessageService {
       return null;
     }
   }
+
+  /**
+   * Delete a message by messageId
+   *
+   * @param messageId the id of the message
+   * @return the number of rows affected
+   */
+  public int deleteMessageById(int messageId) {
+    if (messageRepository.existsById(messageId)) {
+      messageRepository.deleteById(messageId);
+      return 1;
+    }
+    return 0;
+  }
 }
