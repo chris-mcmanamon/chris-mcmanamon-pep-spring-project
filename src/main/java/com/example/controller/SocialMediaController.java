@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,11 +98,31 @@ public class SocialMediaController {
     return ResponseEntity.status(HttpStatus.OK).body(message);
   }
 
+  /**
+   * Endpoint for deleting a message by Id
+   *
+   * @param messageId an integer path variable
+   * @return the number of rows updated (1) or empty body if message did not exist
+   */
   @DeleteMapping("/messages/{messageId}")
   public ResponseEntity<String> deleteMessage(@PathVariable int messageId) {
     int rowsAffected = messageService.deleteMessageById(messageId);
     return ResponseEntity.status(HttpStatus.OK)
         .body(rowsAffected > 0 ? String.valueOf(rowsAffected) : null);
+  }
+
+  /**
+   * Endpoint for updating a message
+   *
+   * @param message a message object containing the message text
+   * @param messageId the Id of the message
+   * @return the number of rows affected (1) with status code 200 OK
+   */
+  @PatchMapping("/messages/{messageId}")
+  public ResponseEntity<Integer> updateMessage(
+      @RequestBody Message message, @PathVariable int messageId) {
+    messageService.updateMessage(messageId, message);
+    return ResponseEntity.status(HttpStatus.OK).body(1);
   }
 
   /**

@@ -83,4 +83,29 @@ public class MessageService {
     }
     return 0;
   }
+
+  /**
+   * Update a message
+   *
+   * @param messageId the id of the message
+   * @param newMessage a Message object containing a new messageText
+   */
+  public void updateMessage(int messageId, Message newMessage) {
+    Optional<Message> optionalMessage = messageRepository.findById(messageId);
+    if (!optionalMessage.isPresent()) {
+      throw new MessageValidationException("Message not found");
+    }
+
+    // TODO: helper function for message validation
+    if (newMessage.getMessageText().isBlank()) {
+      throw new MessageValidationException("Message is blank");
+    }
+    if (newMessage.getMessageText().length() > 255) {
+      throw new MessageValidationException("Message is too long");
+    }
+
+    Message updatedMessage = optionalMessage.get();
+    updatedMessage.setMessageText(newMessage.getMessageText());
+    messageRepository.save(updatedMessage);
+  }
 }
