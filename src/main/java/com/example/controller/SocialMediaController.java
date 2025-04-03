@@ -8,10 +8,12 @@ import com.example.exception.InvalidCredentialsException;
 import com.example.exception.MessageValidationException;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,6 +70,17 @@ public class SocialMediaController {
   public ResponseEntity<Message> postMessage(@RequestBody Message message) {
     Message persistedMessage = messageService.postMessage(message);
     return ResponseEntity.status(HttpStatus.OK).body(persistedMessage);
+  }
+
+  /**
+   * Endpoint for retrieving all messages
+   *
+   * @return all messages in JSON format
+   */
+  @GetMapping("/messages")
+  public ResponseEntity<List<Message>> getAllMessages() {
+    List<Message> messages = messageService.getAllMessages();
+    return ResponseEntity.status(HttpStatus.OK).body(messages);
   }
 
   /**
