@@ -5,6 +5,7 @@ import com.example.exception.AccountValidationException;
 import com.example.exception.DuplicateUsernameException;
 import com.example.exception.InvalidCredentialsException;
 import com.example.repository.AccountRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,8 @@ public class AccountService {
     }
 
     // Ensure username does not already exist in permanent storage
-    if (accountRepository.findByUsername(account.getUsername()) != null) {
+    Optional<Account> foundAccount = accountRepository.findByUsername(account.getUsername());
+    if (foundAccount.isPresent()) {
       throw new DuplicateUsernameException();
     }
 
@@ -55,13 +57,13 @@ public class AccountService {
    * @return the matching account if the credentials check out
    */
   public Account login(Account account) {
-    Account foundAccount = accountRepository.findByUsername(account.getUsername());
-    if (foundAccount == null) {
+    Optional<Account> foundAccount = accountRepository.findByUsername(account.getUsername());
+    if (!foundAccount.isPresent()) {
       throw new InvalidCredentialsException("Username not found");
     }
-    if (!foundAccount.getPassword().equals(account.getPassword())) {
+    if (!foundAccount.get().getPassword().equals(account.getPassword())) {
       throw new InvalidCredentialsException("Password does not match");
     }
-    return foundAccount;
+    return foundAccount.get();
   }
 }
