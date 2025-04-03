@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.entity.Account;
 import com.example.exception.AccountValidationException;
 import com.example.exception.DuplicateUsernameException;
+import com.example.exception.InvalidCredentialsException;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,18 @@ public class SocialMediaController {
   }
 
   /**
+   * Endpoint for logging in
+   *
+   * @param account an account in JSON format in the RequestBody
+   * @return the account, including its accountId, and status code 200 OK
+   */
+  @PostMapping("/login")
+  public ResponseEntity<Account> login(@RequestBody Account account) {
+    Account loggedInAccount = accountService.login(account);
+    return ResponseEntity.status(HttpStatus.OK).body(loggedInAccount);
+  }
+
+  /**
    * Handles exceptions when attempting to register an existing username
    *
    * @param e the exception
@@ -63,5 +76,16 @@ public class SocialMediaController {
   @ExceptionHandler(AccountValidationException.class)
   public ResponseEntity<String> handleAccountInvalid(AccountValidationException e) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+  }
+
+  /**
+   * Handles exceptions when username or password does not match
+   *
+   * @param e the exception
+   * @return 401 Unauthorized and the exception message
+   */
+  @ExceptionHandler(InvalidCredentialsException.class)
+  public ResponseEntity<String> handleInvalidCredentials(InvalidCredentialsException e) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
   }
 }

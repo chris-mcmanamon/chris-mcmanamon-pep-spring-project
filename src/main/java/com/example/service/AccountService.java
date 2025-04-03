@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.entity.Account;
 import com.example.exception.AccountValidationException;
 import com.example.exception.DuplicateUsernameException;
+import com.example.exception.InvalidCredentialsException;
 import com.example.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,22 @@ public class AccountService {
 
     // Persist account and return it
     return accountRepository.save(account);
+  }
+
+  /**
+   * User Login. Username must exist. Password must match.
+   *
+   * @param account an account object
+   * @return the matching account if the credentials check out
+   */
+  public Account login(Account account) {
+    Account foundAccount = accountRepository.findByUsername(account.getUsername());
+    if (foundAccount == null) {
+      throw new InvalidCredentialsException("Username not found");
+    }
+    if (!foundAccount.getPassword().equals(account.getPassword())) {
+      throw new InvalidCredentialsException("Password does not match");
+    }
+    return foundAccount;
   }
 }
