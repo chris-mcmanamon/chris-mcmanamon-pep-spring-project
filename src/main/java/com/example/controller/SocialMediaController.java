@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +82,18 @@ public class SocialMediaController {
   public ResponseEntity<List<Message>> getAllMessages() {
     List<Message> messages = messageService.getAllMessages();
     return ResponseEntity.status(HttpStatus.OK).body(messages);
+  }
+
+  /**
+   * Endpoint for retrieving a message by Id
+   *
+   * @param id an integer path variable
+   * @return the message with Id, which is null if it does not exist
+   */
+  @GetMapping("/messages/{messageId}")
+  public ResponseEntity<Message> getMessageById(@PathVariable int messageId) {
+    Message message = messageService.getMessageById(messageId);
+    return ResponseEntity.status(HttpStatus.OK).body(message);
   }
 
   /**

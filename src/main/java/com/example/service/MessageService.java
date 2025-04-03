@@ -54,4 +54,19 @@ public class MessageService {
   public List<Message> getAllMessages() {
     return (List<Message>) messageRepository.findAll();
   }
+
+  /**
+   * Retrieve message by messageId
+   *
+   * @param messageId the id of the message
+   * @return the message matching the given id
+   */
+  public Message getMessageById(int messageId) {
+    Optional<Message> message = messageRepository.findById(messageId);
+    if (message.isPresent()) {
+      return message.get();
+    } else {
+      return null;
+    }
+  }
 }
