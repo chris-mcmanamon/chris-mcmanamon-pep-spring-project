@@ -76,6 +76,8 @@ public class MessageService {
    * @param messageId the id of the message
    * @return the number of rows affected
    */
+  // TODO: Decide whether Delete and Update should return the deleted/updated object for consistency
+  //
   public int deleteMessageById(int messageId) {
     if (messageRepository.existsById(messageId)) {
       messageRepository.deleteById(messageId);
@@ -107,5 +109,15 @@ public class MessageService {
     Message updatedMessage = optionalMessage.get();
     updatedMessage.setMessageText(newMessage.getMessageText());
     messageRepository.save(updatedMessage);
+  }
+
+  /**
+   * Get all messages by user
+   *
+   * @param accountId the Id of the user
+   * @return a list of messages posted by the user
+   */
+  public List<Message> getMessagesByUser(int accountId) {
+    return messageRepository.findAllByPostedBy(accountId);
   }
 }

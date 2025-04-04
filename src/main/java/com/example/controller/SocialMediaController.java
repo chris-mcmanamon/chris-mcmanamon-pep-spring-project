@@ -126,6 +126,18 @@ public class SocialMediaController {
   }
 
   /**
+   * Endpoint for retrieving all messages by a user
+   *
+   * @param accountId the Id of the user
+   * @return a list of messages posted by the user
+   */
+  @GetMapping("/accounts/{accountId}/messages")
+  public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable int accountId) {
+    List<Message> messages = messageService.getMessagesByUser(accountId);
+    return ResponseEntity.status(HttpStatus.OK).body(messages);
+  }
+
+  /**
    * Handles exceptions when attempting to register an existing username
    *
    * @param e the exception
