@@ -116,7 +116,7 @@ public class MessageService {
   /**
    * Helper method to validate message contents
    *
-   * @param message
+   * @param message the message to be validated
    * @throws MessageValidationException
    */
   private void validateMessageContents(Message message) throws MessageValidationException {
