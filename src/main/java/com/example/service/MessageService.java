@@ -28,13 +28,8 @@ public class MessageService {
    * @return the persisted Message if successful
    */
   public Message postMessage(Message message) {
-    // Validate message length
-    if (message.getMessageText().isBlank()) {
-      throw new MessageValidationException("Message is blank");
-    }
-    if (message.getMessageText().length() > 255) {
-      throw new MessageValidationException("Message is too long");
-    }
+    // Validate message contents
+    validateMessageContents(message);
 
     // Ensure user exists
     Optional<Account> account = accountRepository.findById(message.getPostedBy());
@@ -76,14 +71,14 @@ public class MessageService {
    * @param messageId the id of the message
    * @return the number of rows affected
    */
-  // TODO: Decide whether Delete and Update should return the deleted/updated object for consistency
-  //
-  public int deleteMessageById(int messageId) {
-    if (messageRepository.existsById(messageId)) {
+  public Message deleteMessageById(int messageId) {
+    Optional<Message> optionalMessage = messageRepository.findById(messageId);
+    if (optionalMessage.isPresent()) {
+      Message messageToDelete = optionalMessage.get();
       messageRepository.deleteById(messageId);
-      return 1;
+      return messageToDelete;
     }
-    return 0;
+    return null;
   }
 
   /**
@@ -92,23 +87,20 @@ public class MessageService {
    * @param messageId the id of the message
    * @param newMessage a Message object containing a new messageText
    */
-  public void updateMessage(int messageId, Message newMessage) {
+  public Message updateMessage(int messageId, Message newMessage) {
+    // Determine if message exists
     Optional<Message> optionalMessage = messageRepository.findById(messageId);
     if (!optionalMessage.isPresent()) {
       throw new MessageValidationException("Message not found");
     }
 
-    // TODO: helper function for message validation
-    if (newMessage.getMessageText().isBlank()) {
-      throw new MessageValidationException("Message is blank");
-    }
-    if (newMessage.getMessageText().length() > 255) {
-      throw new MessageValidationException("Message is too long");
-    }
+    // Validate the contents of the new message
+    validateMessageContents(newMessage);
 
+    // Update existing message
     Message updatedMessage = optionalMessage.get();
     updatedMessage.setMessageText(newMessage.getMessageText());
-    messageRepository.save(updatedMessage);
+    return messageRepository.save(updatedMessage);
   }
 
   /**
@@ -119,5 +111,20 @@ public class MessageService {
    */
   public List<Message> getMessagesByUser(int accountId) {
     return messageRepository.findAllByPostedBy(accountId);
+  }
+
+  /**
+   * Helper method to validate message contents
+   *
+   * @param message
+   * @throws MessageValidationException
+   */
+  private void validateMessageContents(Message message) throws MessageValidationException {
+    if (message.getMessageText().isBlank()) {
+      throw new MessageValidationException("Message is blank");
+    }
+    if (message.getMessageText().length() > 255) {
+      throw new MessageValidationException("Message is too long");
+    }
   }
 }

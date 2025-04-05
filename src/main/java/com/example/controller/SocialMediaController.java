@@ -105,10 +105,9 @@ public class SocialMediaController {
    * @return the number of rows updated (1) or empty body if message did not exist
    */
   @DeleteMapping("/messages/{messageId}")
-  public ResponseEntity<String> deleteMessage(@PathVariable int messageId) {
-    int rowsAffected = messageService.deleteMessageById(messageId);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(rowsAffected > 0 ? String.valueOf(rowsAffected) : null);
+  public ResponseEntity<Integer> deleteMessage(@PathVariable int messageId) {
+    Message deletedMessage = messageService.deleteMessageById(messageId);
+    return ResponseEntity.status(HttpStatus.OK).body(deletedMessage == null ? null : 1);
   }
 
   /**
